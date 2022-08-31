@@ -1,0 +1,66 @@
+@import "var_s";
+//color-mixin
+.suffix-color(@No) when (@No<=length(@suffix-item-colors)){
+  @color-suffix:extract(@suffix-item-colors,@No);
+  .suffix-color-name(1);
+  .suffix-color(@No+1);
+}
+.suffix-color-name(@color-item) when (@color-item<=length(@color-names)){
+  @color-name:extract(@color-names,@color-item);
+  @color-name-code:e(%(".%s-%s",@color-suffix, @color-name));
+  @{color-name-code}{
+    background-color: e(extract(@color-codes,@color-item));
+    color: #fff;
+    .text-color-btn();
+  }
+  .suffix-color-name(@color-item+1);
+}
+.text-color-btn() when (@color-suffix = "btn") and (@color-name = "warning"){
+  color: #2e2c2c;
+}
+//spaces-mixin
+.create-media-spaces(@No,@array-space,@array-property) when (@No=1){
+  //@media(max-width: e(extract(@break-point,@No))){
+    .create-selector-all(1,'',@array-space,@array-property);
+  //}
+  .create-media-spaces((@No+1),@array-space,@array-property);
+}
+.create-media-spaces(@No,@array-space-class,@array-property) when (@No<=length(@break-point)) and (@No > 1){
+  @media(min-width: e(extract(@break-point,@No))){
+    .create-selector-all(1,extract(@prefix,@No),@array-space-class,@array-property);
+  }
+  .create-media-spaces((@No+1),@array-space-class,@array-property);
+}
+.create-selector-all(@create-selector-no,@create-suffix,@array-space-class,@padding-property-array) when (@create-selector-no<=length(@array-space-class)){
+  @selector-name:e(%(".%s-%s",extract(@array-space-class,@create-selector-no),@create-suffix));
+  .create-selector(1,e(extract(@padding-property-array,@create-selector-no)));
+  .create-selector-all(@create-selector-no+1,@create-suffix,@array-space-class,@padding-property-array);
+}
+.create-selector(@No-selector,@property-space) when (@No-selector<=6){
+  @number:@No-selector - 1;
+  @{selector-name}@{number}{
+      @{property-space}: (0.25rem*@number);
+  }
+  .create-selector((@No-selector+1),@property-space);
+}
+//col-mixin
+.create-col(@No) when (@No=1){
+  //@media (max-width: e(extract(@break-point,@No))){
+  .create-selector-columns(1,'');
+  //}
+  .create-col(@No+1);
+}
+.create-col(@No) when (@No<=length(@break-point)) and (@No>1){
+  @media (min-width: e(extract(@break-point,@No))){
+    @pref:extract(@prefix,@No);
+    .create-selector-columns(1,@pref);
+  }
+  .create-col(@No+1);
+}
+.create-selector-columns(@col-num,@selectorName) when (@col-num<=@col-number){
+  @Sname:e(%(".col-%s%s",@selectorName,@col-num));
+  @{Sname}{
+    width: (100%/@col-number*@col-num);
+  }
+  .create-selector-columns(@col-num+1,@selectorName)
+}
